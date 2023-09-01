@@ -4,15 +4,15 @@ import scipy
 
 processor = AutoProcessor.from_pretrained("suno/bark")
 model = BarkModel.from_pretrained("suno/bark")
-model.to("cuda")
+model.to("cpu")
 
 def generate_audio(text, preset, output):
     inputs = processor(text, voice_preset=preset)
-    inputs.to("cuda")  # Move inputs to CPU
+    inputs.to("cpu")  # Move inputs to CPU
 
     for k,v in inputs.items():
-        inputs[k]=v.to("cuda")
-        
+        inputs[k]=v.to("cpu")
+
     audio_array = model.generate(**inputs)
 
     audio_array = audio_array.cpu().numpy().squeeze() # Convert to int16 format
@@ -20,9 +20,7 @@ def generate_audio(text, preset, output):
     scipy.io.wavfile.write(output, rate=sample_rate, data=audio_array)
 
 generate_audio(
-    text="Mama Gyan mat dena Maar Munta Chod chintha",
-    preset="v2/en_speaker_9",
-    output="Output.wav",
+    text="Mama [laughter] Gyan mat dena Maar Munta [laughter] Chod chintha",
+    preset=None,
+    output="Output1.wav",
 )
-import torch
-print(torch.cuda.is_available())  # This should print True if CUDA is enabled.
